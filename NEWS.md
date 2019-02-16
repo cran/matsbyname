@@ -1,6 +1,17 @@
+# matsbyname 0.4.10 (2019-02-16)
+
+* Added CRAN installation instructions to README.Rmd, now that the package is on CRAN.
+* Added CITATION file. `citation("matsbyname")` now gives useful information.
+* Fixed a bug in `matrixproduct_byname` 
+  in which row and column types were not set correctly when one
+  operand was a `matrix` and the other operand was `NA`.
+
+
 # matsbyname 0.4.9 (2019-01-17)
 
 * Improved LICENSE file for submission to CRAN.
+* First version to appear on CRAN.
+* Added CRAN and lifecycle badges.
 
 
 # matsbyname 0.4.8 (2019-01-16)
