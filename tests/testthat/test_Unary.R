@@ -316,6 +316,179 @@ test_that("identize_byname works as expected", {
 
 
 ###########################################################
+context("Vectorize")
+###########################################################
+
+test_that("vectorize_byname works as expected", {
+  # Try with a square matrix
+  m1 <- matrix(c(1, 5,
+                4, 5),
+              nrow = 2, ncol = 2, byrow = TRUE, 
+              dimnames = list(c("p1", "p2"), c("i1", "i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expected1 <- matrix(c(1, 
+                        4, 
+                        5, 
+                        5),
+                      nrow = 4, ncol = 1, 
+                      dimnames = list(c("p1 -> i1", "p2 -> i1", "p1 -> i2", "p2 -> i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual1 <- vectorize_byname(m1)
+  expect_equal(actual1, expected1)
+  # Try with a rectangular matrix
+  m2 <- matrix(c(1, 2, 3,
+                 4, 5, 6),
+               nrow = 2, ncol = 3, byrow = TRUE,
+               dimnames = list(c("p1", "p2"), c("i1", "i2", "i3"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expected2 <- matrix(c(1, 
+                       4, 
+                       2, 
+                       5, 
+                       3, 
+                       6),
+                     nrow = 6, ncol = 1,
+                     dimnames = list(c("p1 -> i1", "p2 -> i1", "p1 -> i2", "p2 -> i2", "p1 -> i3", "p2 -> i3"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual2 <- vectorize_byname(m2)
+  expect_equal(actual2, expected2)
+  # Try with a single number
+  m3 <- 42
+  expected3 <- m3
+  dim(expected3) <- c(1, 1)
+  dimnames(expected3) <- list(c(NULL))
+  actual3 <- vectorize_byname(m3)
+  expect_equal(actual3, expected3)
+  # Try with a different separator
+  m4 <- matrix(c(1, 5,
+                 4, 5),
+               nrow = 2, ncol = 2, byrow = TRUE, 
+               dimnames = list(c("p1", "p2"), c("i1", "i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expected4 <- matrix(c(1, 
+                        4, 
+                        5, 
+                        5),
+                      nrow = 4, ncol = 1, 
+                      dimnames = list(c("p1---i1", "p2---i1", "p1---i2", "p2---i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual4 <- vectorize_byname(m4, sep = "---")
+  expect_equal(actual4, expected4)
+  # Test with a matrix that is already a column vector
+  m5 <- matrix(c(1,
+                 2,
+                 3),
+               nrow = 3, ncol = 1,
+               dimnames = list(c("p1", "p2", "p3"), "i1")) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual5 <- vectorize_byname(m5, sep = "***")
+  expected5 <- matrix(c(1,
+                        2,
+                        3),
+                      nrow = 3, ncol = 1,
+                      dimnames = list(c("p1***i1", "p2***i1", "p3***i1"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expect_equal(actual5, expected5)
+  # Test with NULL. Should get NULL back.
+  expect_true(is.null(vectorize_byname(NULL)))
+  # Test with NA.
+  expect_error(vectorize_byname(NA), "a is not numeric in vectorize_byname")
+  # Test with string
+  expect_error(vectorize_byname("a"), "a is not numeric in vectorize_byname")
+  # Test with a list of matrices
+  list6 <- list(m1, m1)
+  actual6 <- vectorize_byname(list6)
+  expected6 <- list(expected1, expected1)
+  expect_equal(actual6, expected6)
+})
+
+
+###########################################################
+context("Matricize")
+###########################################################
+
+test_that("matricize_byname works as expected", {
+  v1 <- array(dim = c(2, 2, 2))
+  expect_error(matricize_byname(v1), "== 2 in matricize_byname")
+
+  # Try with a collumn vector  
+  v2 <- matrix(c(1,
+                 2,
+                 3, 
+                 4), 
+               nrow = 4, ncol = 1, dimnames = list(c("p1 -> i1", "p2 -> i1", "p1 -> i2", "p2 -> i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual2 <- matricize_byname(v2)
+  expected2 <- matrix(c(1, 3,
+                        2, 4),
+                      nrow = 2, ncol = 2, byrow = TRUE, dimnames = list(c("p1", "p2"), c("i1", "i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expect_equal(actual2, expected2)
+                        
+  # Try with a row vector
+  v3 <- matrix(c(1, 2, 3, 4), 
+               nrow = 1, ncol = 4, dimnames = list(NULL, c("p1 -> i1", "p2 -> i1", "p1 -> i2", "p2 -> i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual3 <- matricize_byname(v3)
+  expected3 <- matrix(c(1, 3,
+                        2, 4),
+                      nrow = 2, ncol = 2, byrow = TRUE, dimnames = list(c("p1", "p2"), c("i1", "i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expect_equal(actual3, expected3)
+  
+  # Try with a 1x1 matrix as a column vector.
+  v4 <- matrix(42, nrow = 1, ncol = 1, dimnames = list(c("p2 -> i1"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual4 <- matricize_byname(v4)
+  expected4 <- matrix(42, nrow = 1, ncol = 1, dimnames = list("p2", "i1")) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expect_equal(actual4, expected4)
+  
+  # Try with a 1x1 matrix as a row vector.
+  v5 <- matrix(42, nrow = 1, ncol = 1, dimnames = list(NULL, c("p2 -> i1"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual5 <- matricize_byname(v5)
+  expected5 <- matrix(42, nrow = 1, ncol = 1, dimnames = list("p2", "i1")) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expect_equal(actual5, expected5)
+  
+  # Try with a non-square result
+  v6 <- matrix(c(1, 2, 3, 4, 5, 6),
+               nrow = 1, ncol = 6, dimnames = list(NULL, c("p1 -> i1", "p1 -> i2", 
+                                                           "p2 -> i1", "p2 -> i2",
+                                                           "p3 -> i1", "p3 -> i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  actual6 <- matricize_byname(v6)
+  expected6 <- matrix(c(1, 2, 
+                        3, 4, 
+                        5, 6),
+                      nrow = 3, ncol = 2, byrow = TRUE, dimnames = list(c("p1", "p2", "p3"), c("i1", "i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  expect_equal(actual6, expected6)
+})
+
+
+###########################################################
+context("Vectorize and Matricize")
+###########################################################
+
+test_that("vectorize and matricize are inverses of each other", {
+  m1 <- matrix(c(1, 2, 
+                 3, 4, 
+                 5, 6),
+               nrow = 3, ncol = 2, byrow = TRUE, dimnames = list(c("p1", "p2", "p3"), c("i1", "i2"))) %>% 
+    setrowtype("Products") %>% setcoltype("Industries")
+  v1 <- vectorize_byname(m1)
+  m2 <- matricize_byname(v1)
+  expect_equal(m2, m1)
+  # Do a regular transpose here (t), because transpose_byname switches rowtype and coltype.
+  v3 <- t(v1)
+  m4 <- matricize_byname(v3)
+  expect_equal(m4, m1)
+})
+
+
+###########################################################
 context("Fractionize")
 ###########################################################
 
@@ -1095,7 +1268,7 @@ test_that("cumsum_byname works as expected", {
   expect_equal(cumsum_byname(mlist), expected)
   
   # Ensure that groups are respected in the context of mutate.
-  DF3 <- data.frame(grp = c("A", "A", "B"), m = I(mlist)) %>% 
+  DF3 <- tibble::tibble(grp = c("A", "A", "B"), m = mlist) %>% 
     dplyr::group_by(grp) %>% 
     dplyr::mutate(
       m2 = cumsum_byname(m)
@@ -1150,7 +1323,8 @@ test_that("cumprod_byname works as expected", {
   expect_equal(cumprod_byname(mlist), expected)
 
   # Ensure that groups are respected in the context of mutate.
-  DF3 <- data.frame(grp = c("A", "A", "B"), m = I(mlist)) %>%
+  # DF3 <- data.frame(grp = c("A", "A", "B"), m = I(mlist)) %>%
+  DF3 <- tibble::tibble(grp = c("A", "A", "B"), m = mlist) %>%
     dplyr::group_by(grp) %>%
     dplyr::mutate(
       m2 = cumprod_byname(m)
