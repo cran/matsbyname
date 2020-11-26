@@ -12,27 +12,87 @@
 
 <meta name="author" content="Matthew Kuperus Heun" />
 
-<meta name="date" content="2020-05-29" />
+<meta name="date" content="2020-11-25" />
 
 <title>Use Cases and Examples for matsbyname</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -52,7 +112,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -303,7 +363,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Use Cases and Examples for <code>matsbyname</code></h1>
 <h4 class="author">Matthew Kuperus Heun</h4>
-<h4 class="date">2020-05-29</h4>
+<h4 class="date">2020-11-25</h4>
 
 
 
@@ -340,89 +400,89 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="problem-1" class="section level3">
 <h3>Problem 1</h3>
 <p>Although built-in matrix functions ensure size conformity of matrix operands, they do not respect the names of rows and columns (known as <tt>dimnames</tt> in <tt>R</tt>). In the following example, <strong>U</strong> represents a <em>use</em> matrix that contains the quantity of each product used by each industry, and <strong>Y</strong> represents a <em>final demand</em> matrix that contains the quantity of each product consumed by final demand industries. If the rows and columns are not in the same order, the sum of the matrices is nonsensical.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>productnames &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2"></a>industrynames &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a>U &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(productnames, industrynames))</span>
-<span id="cb1-4"><a href="#cb1-4"></a>U</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; p1  1  3</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; p2  2  4</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>Y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">rev</span>(productnames), <span class="kw">rev</span>(industrynames)))</span>
-<span id="cb1-9"><a href="#cb1-9"></a>Y</span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt;    i2 i1</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; p2  1  3</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; p1  2  4</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co"># This sum is nonsensical.  Neither row nor column names are respected.</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a>U <span class="op">+</span><span class="st"> </span>Y </span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; p1  2  6</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; p2  4  8</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>productnames <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>industrynames <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(productnames, industrynames))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>U</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  1  3</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">rev</span>(productnames), <span class="fu">rev</span>(industrynames)))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Y</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i2 i1</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  1  3</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  2  4</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># This sum is nonsensical.  Neither row nor column names are respected.</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>U <span class="sc">+</span> Y </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  2  6</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  4  8</span></span></code></pre></div>
 <p>As a result, analysts performing matrix operations must maintain strict order of rows and columns across all calculations.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Make a new version of Y (Y2), this time with dimnames in same order as U</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>Y2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">4</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(productnames, industrynames))</span>
-<span id="cb2-3"><a href="#cb2-3"></a>Y2</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; p1  4  2</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt; p2  3  1</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="co"># Now the sum is sensible. Both row and column names are respected.</span></span>
-<span id="cb2-8"><a href="#cb2-8"></a>U <span class="op">+</span><span class="st"> </span>Y2</span>
-<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; p1  5  5</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; p2  5  5</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a new version of Y (Y2), this time with dimnames in same order as U</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Y2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(productnames, industrynames))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Y2</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  4  2</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  3  1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now the sum is sensible. Both row and column names are respected.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>U <span class="sc">+</span> Y2</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  5  5</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  5  5</span></span></code></pre></div>
 </div>
 <div id="problem-2" class="section level3">
 <h3>Problem 2</h3>
 <p>In many cases, operand matrices may have different numbers or different names of rows or columns. This situation can occur when, for example, products or industries changes across time periods. When performing matrix operations, rows or columns of zeros must be added to ensure name conformity.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>Y3 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">5</span><span class="op">:</span><span class="dv">8</span>, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p3&quot;</span>), <span class="kw">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i3&quot;</span>)))</span>
-<span id="cb3-2"><a href="#cb3-2"></a>Y3</span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt;    i1 i3</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; p1  5  7</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; p3  6  8</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># Nonsensical because neither row names nor column names are respected. </span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co"># The &quot;p3&quot; rows and &quot;i3&quot; columns of Y3 have been added to </span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># &quot;p2&quot; rows and &quot;i2&quot; columns of U.</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co"># Row and column names for the sum are taken from the first operand (U).</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a>U <span class="op">+</span><span class="st"> </span>Y3</span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt; p1  6 10</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt; p2  8 12</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="co"># Rather, need to insert missing rows in both U and Y before summing.</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a>U_<span class="dv">2000</span> &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>,</span>
-<span id="cb3-16"><a href="#cb3-16"></a>                   <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">0</span>,</span>
-<span id="cb3-17"><a href="#cb3-17"></a>                   <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb3-18"><a href="#cb3-18"></a>                 <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, </span>
-<span id="cb3-19"><a href="#cb3-19"></a>                 <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p3&quot;</span>), <span class="kw">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i3&quot;</span>)))</span>
-<span id="cb3-20"><a href="#cb3-20"></a>Y_<span class="dv">2000</span> &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">7</span>,</span>
-<span id="cb3-21"><a href="#cb3-21"></a>                   <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, </span>
-<span id="cb3-22"><a href="#cb3-22"></a>                   <span class="dv">6</span>, <span class="dv">0</span>, <span class="dv">8</span>),</span>
-<span id="cb3-23"><a href="#cb3-23"></a>                 <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb3-24"><a href="#cb3-24"></a>                 <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p3&quot;</span>), <span class="kw">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i3&quot;</span>)))</span>
-<span id="cb3-25"><a href="#cb3-25"></a>U_<span class="dv">2000</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a><span class="co">#&gt;    i1 i2 i3</span></span>
-<span id="cb3-27"><a href="#cb3-27"></a><span class="co">#&gt; p1  1  3  0</span></span>
-<span id="cb3-28"><a href="#cb3-28"></a><span class="co">#&gt; p2  2  4  0</span></span>
-<span id="cb3-29"><a href="#cb3-29"></a><span class="co">#&gt; p3  0  0  0</span></span>
-<span id="cb3-30"><a href="#cb3-30"></a>Y_<span class="dv">2000</span></span>
-<span id="cb3-31"><a href="#cb3-31"></a><span class="co">#&gt;    i1 i2 i3</span></span>
-<span id="cb3-32"><a href="#cb3-32"></a><span class="co">#&gt; p1  5  0  7</span></span>
-<span id="cb3-33"><a href="#cb3-33"></a><span class="co">#&gt; p2  0  0  0</span></span>
-<span id="cb3-34"><a href="#cb3-34"></a><span class="co">#&gt; p3  6  0  8</span></span>
-<span id="cb3-35"><a href="#cb3-35"></a>U_<span class="dv">2000</span> <span class="op">+</span><span class="st"> </span>Y_<span class="dv">2000</span></span>
-<span id="cb3-36"><a href="#cb3-36"></a><span class="co">#&gt;    i1 i2 i3</span></span>
-<span id="cb3-37"><a href="#cb3-37"></a><span class="co">#&gt; p1  6  3  7</span></span>
-<span id="cb3-38"><a href="#cb3-38"></a><span class="co">#&gt; p2  2  4  0</span></span>
-<span id="cb3-39"><a href="#cb3-39"></a><span class="co">#&gt; p3  6  0  8</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Y3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p3&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i3&quot;</span>)))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Y3</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i3</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  5  7</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p3  6  8</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Nonsensical because neither row names nor column names are respected. </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># The &quot;p3&quot; rows and &quot;i3&quot; columns of Y3 have been added to </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;p2&quot; rows and &quot;i2&quot; columns of U.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Row and column names for the sum are taken from the first operand (U).</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>U <span class="sc">+</span> Y3</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  6 10</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  8 12</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Rather, need to insert missing rows in both U and Y before summing.</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>U_2000 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                   <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">0</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                   <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p3&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i3&quot;</span>)))</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>Y_2000 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">7</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                   <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                   <span class="dv">6</span>, <span class="dv">0</span>, <span class="dv">8</span>),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                 <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p3&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i3&quot;</span>)))</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>U_2000</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2 i3</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  1  3  0</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4  0</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p3  0  0  0</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>Y_2000</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2 i3</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  5  0  7</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  0  0  0</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p3  6  0  8</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>U_2000 <span class="sc">+</span> Y_2000</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2 i3</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  6  3  7</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4  0</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p3  6  0  8</span></span></code></pre></div>
 <p>The analyst’s burden is cumbersome. But worse problems await.</p>
 <p>Respecting names (and adding rows and columns of zeroes) can lead to an inability to invert matrices downstream, as shown in the following example.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># The original U matrix is invertible.</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">solve</span>(U)</span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt;    p1   p2</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; i1 -2  1.5</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt; i2  1 -0.5</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co"># The version of U that contains zero rows and columns (U_2000)</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="co"># is singular and cannot be inverted.</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="kw">tryCatch</span>(<span class="kw">solve</span>(U_<span class="dv">2000</span>), <span class="dt">error =</span> <span class="cf">function</span>(err){<span class="kw">print</span>(err)})</span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; &lt;simpleError in solve.default(U_2000): Lapack routine dgesv: system is exactly singular: U[3,3] = 0&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The original U matrix is invertible.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">solve</span>(U)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    p1   p2</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i1 -2  1.5</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i2  1 -0.5</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># The version of U that contains zero rows and columns (U_2000)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># is singular and cannot be inverted.</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">solve</span>(U_2000), <span class="at">error =</span> <span class="cf">function</span>(err){<span class="fu">print</span>(err)})</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;simpleError in solve.default(U_2000): Lapack routine dgesv: system is exactly singular: U[3,3] = 0&gt;</span></span></code></pre></div>
 </div>
 <div id="problem-3" class="section level3">
 <h3>Problem 3</h3>
@@ -441,22 +501,22 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li>respect row and column types, enforcing conformity as appropriate.</li>
 </ul>
 <p>These features are available without analyst intervention, as shown in the following example.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Same as U + Y2, without needing to create Y2.</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">sum_byname</span>(U, Y)</span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; p1  5  5</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; p2  5  5</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="co"># Same as U_2000 + Y_2000, but U and Y3 are unmodified.</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">sum_byname</span>(U, Y3)</span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt;    i1 i2 i3</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; p1  6  3  7</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; p2  2  4  0</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; p3  6  0  8</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="co"># Eliminate zero-filled rows and columns. Same result as solve(U).</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a>U_<span class="dv">2000</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">clean_byname</span>(<span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">clean_value =</span> <span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">solve</span>()</span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;    p1   p2</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; i1 -2  1.5</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt; i2  1 -0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Same as U + Y2, without needing to create Y2.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_byname</span>(U, Y)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  5  5</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  5  5</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Same as U_2000 + Y_2000, but U and Y3 are unmodified.</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_byname</span>(U, Y3)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2 i3</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  6  3  7</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4  0</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p3  6  0  8</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminate zero-filled rows and columns. Same result as solve(U).</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>U_2000 <span class="sc">%&gt;%</span> <span class="fu">clean_byname</span>(<span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">clean_value =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> <span class="fu">solve</span>()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    p1   p2</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i1 -2  1.5</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i2  1 -0.5</span></span></code></pre></div>
 <p>In addition to <tt>sum_byname</tt> and <tt>clean_byname</tt>, the <tt>matsbyname</tt> package contains many additional matrix algebra functions that respect the names of rows and columns. Commonly-used functions are:</p>
 <ul>
 <li><code>sum_byname()</code></li>
@@ -470,8 +530,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>transpose_byname()</code>.</li>
 </ul>
 <p>The full list of functions can be found with <tt>?matsbyname</tt> and clicking the <tt>Index</tt> link.</p>
-<p>Furthermore, <tt>matsbyname</tt> works well with its sister package, <tt>matsindf</tt>. <tt>matsindf</tt> creates data frames whose entries are not numbers but entire matrices, thereby enabling the use of <tt>matsbyname</tt> functions in <a href="http://www.tidyverse.org"><tt>tidyverse</tt></a> functional programming.</p>
-<p>When used together, <tt>matsbyname</tt> and <tt>matsindf</tt> allow analysts to wield simultaneously the power of both <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">matrix mathematics</a> and <a href="http://www.tidyverse.org"><tt>tidyverse</tt></a> functional programming.</p>
+<p>Furthermore, <tt>matsbyname</tt> works well with its sister package, <tt>matsindf</tt>. <tt>matsindf</tt> creates data frames whose entries are not numbers but entire matrices, thereby enabling the use of <tt>matsbyname</tt> functions in <a href="https://www.tidyverse.org"><tt>tidyverse</tt></a> functional programming.</p>
+<p>When used together, <tt>matsbyname</tt> and <tt>matsindf</tt> allow analysts to wield simultaneously the power of both <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">matrix mathematics</a> and <a href="https://www.tidyverse.org"><tt>tidyverse</tt></a> functional programming.</p>
 <p>This vignette demonstrates the power of matrix mathematics performed <tt>by name</tt>.</p>
 </div>
 <div id="matsbyname-features" class="section level2">
@@ -480,189 +540,189 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="setting-row-and-column-names" class="section level3">
 <h3>Setting row and column names</h3>
 <p>In the preceding examples, row and column names were provided by the <tt>dimnames</tt> argument to the <tt>matrix</tt> function. However, <tt>matsbyname</tt> provides the <tt>setcolnames_byname</tt> and <tt>setrownames_byname</tt> functions to perform the same tasks using the pipe operator (<tt>%&gt;%</tt>).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>U_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="st">  </span><span class="kw">setrownames_byname</span>(productnames) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcolnames_byname</span>(industrynames)</span>
-<span id="cb6-3"><a href="#cb6-3"></a>U_<span class="dv">2</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; p1  1  3</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; p2  2  4</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>U_2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrownames_byname</span>(productnames) <span class="sc">%&gt;%</span> <span class="fu">setcolnames_byname</span>(industrynames)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>U_2</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  1  3</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4</span></span></code></pre></div>
 </div>
 <div id="setting-row-and-column-types" class="section level3">
 <h3>Setting row and column types</h3>
 <p>Row and column types can be understood by analogy: row and column types are to matrices in matrix algebra as units are to scalars in scalar algebra. Just as careful tracking of units is necessary in scalar calculations, careful tracking of row and column types is necessary in matrix operations. Because <tt>matsbyname</tt> keeps track of row and column types automatically, much of the burden of dealing with row and column types is removed from the analyst.</p>
 <p>Row and column types are character strings stored as attributes of the matrix object, and <tt>matsbyname</tt> functions ensure correctness of matrix operations by checking row and column types, throwing errors if needed. Row and column types can be set by the functions <tt>setrowtype</tt> and <tt>setcoltype</tt> and retrieved by the functions <tt>rowtype</tt> and <tt>coltype</tt>. Consider matrices <strong>A</strong>, <strong>B</strong>, and <strong>C</strong>:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>A &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="st">  </span><span class="kw">setrownames_byname</span>(productnames) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcolnames_byname</span>(industrynames) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="st">  </span><span class="kw">setrowtype</span>(<span class="st">&quot;Products&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcoltype</span>(<span class="st">&quot;Industries&quot;</span>)</span>
-<span id="cb7-4"><a href="#cb7-4"></a>A</span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; p1  1  3</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; p2  2  4</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb7-12"><a href="#cb7-12"></a>B &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">8</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-13"><a href="#cb7-13"></a><span class="st">  </span><span class="kw">setrownames_byname</span>(productnames) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcolnames_byname</span>(industrynames) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-14"><a href="#cb7-14"></a><span class="st">  </span><span class="kw">setrowtype</span>(<span class="st">&quot;Products&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcoltype</span>(<span class="st">&quot;Industries&quot;</span>)</span>
-<span id="cb7-15"><a href="#cb7-15"></a>B</span>
-<span id="cb7-16"><a href="#cb7-16"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb7-17"><a href="#cb7-17"></a><span class="co">#&gt; p1  8  6</span></span>
-<span id="cb7-18"><a href="#cb7-18"></a><span class="co">#&gt; p2  7  5</span></span>
-<span id="cb7-19"><a href="#cb7-19"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb7-20"><a href="#cb7-20"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb7-21"><a href="#cb7-21"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb7-22"><a href="#cb7-22"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb7-23"><a href="#cb7-23"></a>C &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-24"><a href="#cb7-24"></a><span class="st">  </span><span class="kw">setrownames_byname</span>(industrynames) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcolnames_byname</span>(productnames) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-25"><a href="#cb7-25"></a><span class="st">  </span><span class="kw">setrowtype</span>(<span class="st">&quot;Industries&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">setcoltype</span>(<span class="st">&quot;Products&quot;</span>)</span>
-<span id="cb7-26"><a href="#cb7-26"></a>C</span>
-<span id="cb7-27"><a href="#cb7-27"></a><span class="co">#&gt;    p1 p2</span></span>
-<span id="cb7-28"><a href="#cb7-28"></a><span class="co">#&gt; i1  1  3</span></span>
-<span id="cb7-29"><a href="#cb7-29"></a><span class="co">#&gt; i2  2  4</span></span>
-<span id="cb7-30"><a href="#cb7-30"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb7-31"><a href="#cb7-31"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb7-32"><a href="#cb7-32"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb7-33"><a href="#cb7-33"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrownames_byname</span>(productnames) <span class="sc">%&gt;%</span> <span class="fu">setcolnames_byname</span>(industrynames) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrowtype</span>(<span class="st">&quot;Products&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">setcoltype</span>(<span class="st">&quot;Industries&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>A</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  1  3</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">8</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrownames_byname</span>(productnames) <span class="sc">%&gt;%</span> <span class="fu">setcolnames_byname</span>(industrynames) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrowtype</span>(<span class="st">&quot;Products&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">setcoltype</span>(<span class="st">&quot;Industries&quot;</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>B</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  8  6</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  7  5</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrownames_byname</span>(industrynames) <span class="sc">%&gt;%</span> <span class="fu">setcolnames_byname</span>(productnames) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrowtype</span>(<span class="st">&quot;Industries&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">setcoltype</span>(<span class="st">&quot;Products&quot;</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>C</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    p1 p2</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i1  1  3</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i2  2  4</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
 <p><strong>B</strong> can be added to <strong>A</strong>, because row and column types are identical.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">sum_byname</span>(A, B)</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; p1  9  9</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; p2  9  9</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_byname</span>(A, B)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  9  9</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  9  9</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
 <p>However, <strong>C</strong> cannot be added to <strong>A</strong> (or <strong>B</strong>), because row and column types disagree.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">tryCatch</span>(<span class="kw">sum_byname</span>(A, C), <span class="dt">error =</span> <span class="cf">function</span>(err){<span class="kw">print</span>(err)})</span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="co">#&gt; &lt;simpleError in organize_args(a, b, fill = 0, match_type = match_type): rowtype(a) (Products) != rowtype(b) (Industries).&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">sum_byname</span>(A, C), <span class="at">error =</span> <span class="cf">function</span>(err){<span class="fu">print</span>(err)})</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;simpleError in organize_args(a, b, fill = 0, match_type = match_type): rowtype(a) (Products) != rowtype(b) (Industries).&gt;</span></span></code></pre></div>
 <p>In this case, a sum is possible if <strong>C</strong> is transposed prior to adding to <strong>A</strong>, because row and column types of <strong>A</strong> and <strong>C</strong><sup>T</sup> agree.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">sum_byname</span>(A, <span class="kw">transpose_byname</span>(C))</span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt; p1  2  5</span></span>
-<span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt; p2  5  8</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_byname</span>(A, <span class="fu">transpose_byname</span>(C))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  2  5</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  5  8</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
 <p>Matrices <strong>A</strong> and <strong>B</strong> can be element-multiplied and element-divided for the same reason they can be summed: row and column types agree.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">hadamardproduct_byname</span>(A, B)</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; p1  8 18</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; p2 14 20</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="kw">quotient_byname</span>(A, B)</span>
-<span id="cb11-10"><a href="#cb11-10"></a><span class="co">#&gt;           i1  i2</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a><span class="co">#&gt; p1 0.1250000 0.5</span></span>
-<span id="cb11-12"><a href="#cb11-12"></a><span class="co">#&gt; p2 0.2857143 0.8</span></span>
-<span id="cb11-13"><a href="#cb11-13"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb11-14"><a href="#cb11-14"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb11-16"><a href="#cb11-16"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hadamardproduct_byname</span>(A, B)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  8 18</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2 14 20</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">quotient_byname</span>(A, B)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           i1  i2</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1 0.1250000 0.5</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2 0.2857143 0.8</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
 <p>Note that <strong>A</strong> and <strong>C</strong> can be matrix-multiplied, because the column type of <strong>A</strong> and the row type of <strong>C</strong> are identical (<tt>Industries</tt>). The result is a <tt>Products</tt>-by-<tt>Products</tt> matrix.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">matrixproduct_byname</span>(A, C)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matrixproduct_byname</span>(A, C)</span></code></pre></div>
 <p>However, <strong>A</strong> and <strong>B</strong> cannot be matrix-multiplied, because the column type of <strong>A</strong> (<tt>Industries</tt>) and the row type of <strong>B</strong> (<tt>Products</tt>) are different.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">tryCatch</span>(<span class="kw">matrixproduct_byname</span>(A, B), <span class="dt">error =</span> <span class="cf">function</span>(err){<span class="kw">print</span>(err)})</span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="co">#&gt; &lt;simpleError in organize_args(a, b, fill = 0, match_type = match_type): coltype(a) != rowtype(b): Industries != Products.&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">matrixproduct_byname</span>(A, B), <span class="at">error =</span> <span class="cf">function</span>(err){<span class="fu">print</span>(err)})</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;simpleError in organize_args(a, b, fill = 0, match_type = match_type): coltype(a) != rowtype(b): Industries != Products.&gt;</span></span></code></pre></div>
 <p>Analysts are encouraged to set row and column types on matrices, thereby taking advantage of <code>matsbyname</code>’s type-tracking feature to improve their matrix-based analyses.</p>
 </div>
 <div id="byname-functions-work-well-with-lists" class="section level3">
 <h3><code>*_byname</code> functions work well with lists</h3>
 <p>Another feature of the <code>matsbyname</code> package is that it works when arguments to functions are lists of matrices, returning lists as appropriate.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">sum_byname</span>(A, <span class="kw">list</span>(B, B))</span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb14-3"><a href="#cb14-3"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a><span class="co">#&gt; p1  9  9</span></span>
-<span id="cb14-5"><a href="#cb14-5"></a><span class="co">#&gt; p2  9  9</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb14-7"><a href="#cb14-7"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb14-9"><a href="#cb14-9"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb14-10"><a href="#cb14-10"></a><span class="co">#&gt; </span></span>
-<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb14-12"><a href="#cb14-12"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb14-13"><a href="#cb14-13"></a><span class="co">#&gt; p1  9  9</span></span>
-<span id="cb14-14"><a href="#cb14-14"></a><span class="co">#&gt; p2  9  9</span></span>
-<span id="cb14-15"><a href="#cb14-15"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb14-16"><a href="#cb14-16"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb14-17"><a href="#cb14-17"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb14-18"><a href="#cb14-18"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb14-19"><a href="#cb14-19"></a><span class="kw">hadamardproduct_byname</span>(<span class="kw">list</span>(A, A), B)</span>
-<span id="cb14-20"><a href="#cb14-20"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb14-21"><a href="#cb14-21"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb14-22"><a href="#cb14-22"></a><span class="co">#&gt; p1  8 18</span></span>
-<span id="cb14-23"><a href="#cb14-23"></a><span class="co">#&gt; p2 14 20</span></span>
-<span id="cb14-24"><a href="#cb14-24"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb14-25"><a href="#cb14-25"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb14-26"><a href="#cb14-26"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb14-27"><a href="#cb14-27"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb14-28"><a href="#cb14-28"></a><span class="co">#&gt; </span></span>
-<span id="cb14-29"><a href="#cb14-29"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb14-30"><a href="#cb14-30"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb14-31"><a href="#cb14-31"></a><span class="co">#&gt; p1  8 18</span></span>
-<span id="cb14-32"><a href="#cb14-32"></a><span class="co">#&gt; p2 14 20</span></span>
-<span id="cb14-33"><a href="#cb14-33"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb14-34"><a href="#cb14-34"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb14-35"><a href="#cb14-35"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb14-36"><a href="#cb14-36"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb14-37"><a href="#cb14-37"></a><span class="kw">matrixproduct_byname</span>(<span class="kw">list</span>(A, A), <span class="kw">list</span>(C, C))</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_byname</span>(A, <span class="fu">list</span>(B, B))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  9  9</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  9  9</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  9  9</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  9  9</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hadamardproduct_byname</span>(<span class="fu">list</span>(A, A), B)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  8 18</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2 14 20</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  8 18</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2 14 20</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="fu">matrixproduct_byname</span>(<span class="fu">list</span>(A, A), <span class="fu">list</span>(C, C))</span></code></pre></div>
 </div>
 <div id="matsbyname-works-well-with-matsindf" class="section level3">
 <h3><tt>matsbyname</tt> works well with <tt>matsindf</tt></h3>
-<p>The <tt>matsindf</tt> package provides functions that collapse <a href="http://tidyr.tidyverse.org/articles/tidy-data.html">tidy</a> data frames of matrix elements into data frames of matrices. Data frames of matrices, such as those created by <tt>matsindf</tt>, are like magic spreadsheets in which single cells contain entire matrices.</p>
+<p>The <tt>matsindf</tt> package provides functions that collapse <a href="https://tidyr.tidyverse.org/articles/tidy-data.html">tidy</a> data frames of matrix elements into data frames of matrices. Data frames of matrices, such as those created by <tt>matsindf</tt>, are like magic spreadsheets in which single cells contain entire matrices.</p>
 <p>The following example demonstrates an approach to creating a data frame of matrices.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>tidy &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
-<span id="cb15-2"><a href="#cb15-2"></a>  <span class="dt">matrix =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;B&quot;</span>),</span>
-<span id="cb15-3"><a href="#cb15-3"></a>  <span class="dt">row =</span> <span class="kw">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p2&quot;</span>),</span>
-<span id="cb15-4"><a href="#cb15-4"></a>  <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>),</span>
-<span id="cb15-5"><a href="#cb15-5"></a>  <span class="dt">vals =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">5</span>)</span>
-<span id="cb15-6"><a href="#cb15-6"></a>) <span class="op">%&gt;%</span></span>
-<span id="cb15-7"><a href="#cb15-7"></a><span class="st">  </span><span class="kw">mutate</span>(</span>
-<span id="cb15-8"><a href="#cb15-8"></a>    <span class="dt">rowtype =</span> <span class="st">&quot;Industries&quot;</span>,</span>
-<span id="cb15-9"><a href="#cb15-9"></a>    <span class="dt">coltype  =</span> <span class="st">&quot;Products&quot;</span></span>
-<span id="cb15-10"><a href="#cb15-10"></a>  )</span>
-<span id="cb15-11"><a href="#cb15-11"></a>tidy</span>
-<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt;   matrix row col vals    rowtype  coltype</span></span>
-<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt; 1      A  p1  i1    1 Industries Products</span></span>
-<span id="cb15-14"><a href="#cb15-14"></a><span class="co">#&gt; 2      A  p1  i2    3 Industries Products</span></span>
-<span id="cb15-15"><a href="#cb15-15"></a><span class="co">#&gt; 3      A  p2  i1    2 Industries Products</span></span>
-<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt; 4      A  p2  i2    4 Industries Products</span></span>
-<span id="cb15-17"><a href="#cb15-17"></a><span class="co">#&gt; 5      B  p1  i1    8 Industries Products</span></span>
-<span id="cb15-18"><a href="#cb15-18"></a><span class="co">#&gt; 6      B  p1  i2    6 Industries Products</span></span>
-<span id="cb15-19"><a href="#cb15-19"></a><span class="co">#&gt; 7      B  p2  i1    7 Industries Products</span></span>
-<span id="cb15-20"><a href="#cb15-20"></a><span class="co">#&gt; 8      B  p2  i2    5 Industries Products</span></span>
-<span id="cb15-21"><a href="#cb15-21"></a>mats &lt;-<span class="st"> </span>tidy <span class="op">%&gt;%</span></span>
-<span id="cb15-22"><a href="#cb15-22"></a><span class="st">  </span><span class="kw">group_by</span>(matrix) <span class="op">%&gt;%</span></span>
-<span id="cb15-23"><a href="#cb15-23"></a><span class="st">  </span>matsindf<span class="op">::</span><span class="kw">collapse_to_matrices</span>(<span class="dt">matnames =</span> <span class="st">&quot;matrix&quot;</span>, <span class="dt">matvals =</span> <span class="st">&quot;vals&quot;</span>,</span>
-<span id="cb15-24"><a href="#cb15-24"></a>                                 <span class="dt">rownames =</span> <span class="st">&quot;row&quot;</span>, <span class="dt">colnames =</span> <span class="st">&quot;col&quot;</span>,</span>
-<span id="cb15-25"><a href="#cb15-25"></a>                                 <span class="dt">rowtypes =</span> <span class="st">&quot;rowtype&quot;</span>, <span class="dt">coltypes =</span> <span class="st">&quot;coltype&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb15-26"><a href="#cb15-26"></a><span class="st">  </span><span class="kw">rename</span>(</span>
-<span id="cb15-27"><a href="#cb15-27"></a>    <span class="dt">matrix.name =</span> matrix,</span>
-<span id="cb15-28"><a href="#cb15-28"></a>    <span class="dt">matrix =</span> vals</span>
-<span id="cb15-29"><a href="#cb15-29"></a>  )</span>
-<span id="cb15-30"><a href="#cb15-30"></a>mats</span>
-<span id="cb15-31"><a href="#cb15-31"></a><span class="co">#&gt;   matrix.name     matrix</span></span>
-<span id="cb15-32"><a href="#cb15-32"></a><span class="co">#&gt; 1           A 1, 2, 3, 4</span></span>
-<span id="cb15-33"><a href="#cb15-33"></a><span class="co">#&gt; 2           B 8, 7, 6, 5</span></span>
-<span id="cb15-34"><a href="#cb15-34"></a>mats<span class="op">$</span>matrix[[<span class="dv">1</span>]]</span>
-<span id="cb15-35"><a href="#cb15-35"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb15-36"><a href="#cb15-36"></a><span class="co">#&gt; p1  1  3</span></span>
-<span id="cb15-37"><a href="#cb15-37"></a><span class="co">#&gt; p2  2  4</span></span>
-<span id="cb15-38"><a href="#cb15-38"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb15-39"><a href="#cb15-39"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb15-40"><a href="#cb15-40"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb15-41"><a href="#cb15-41"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb15-42"><a href="#cb15-42"></a>mats<span class="op">$</span>matrix[[<span class="dv">2</span>]]</span>
-<span id="cb15-43"><a href="#cb15-43"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb15-44"><a href="#cb15-44"></a><span class="co">#&gt; p1  8  6</span></span>
-<span id="cb15-45"><a href="#cb15-45"></a><span class="co">#&gt; p2  7  5</span></span>
-<span id="cb15-46"><a href="#cb15-46"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb15-47"><a href="#cb15-47"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb15-48"><a href="#cb15-48"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb15-49"><a href="#cb15-49"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tidy <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">matrix =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;B&quot;</span>),</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">row =</span> <span class="fu">c</span>(<span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;p2&quot;</span>, <span class="st">&quot;p2&quot;</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>, <span class="st">&quot;i1&quot;</span>, <span class="st">&quot;i2&quot;</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">vals =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">5</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowtype =</span> <span class="st">&quot;Industries&quot;</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">coltype  =</span> <span class="st">&quot;Products&quot;</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>tidy</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   matrix row col vals    rowtype  coltype</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      A  p1  i1    1 Industries Products</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      A  p1  i2    3 Industries Products</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      A  p2  i1    2 Industries Products</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      A  p2  i2    4 Industries Products</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      B  p1  i1    8 Industries Products</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6      B  p1  i2    6 Industries Products</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7      B  p2  i1    7 Industries Products</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8      B  p2  i2    5 Industries Products</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>mats <span class="ot">&lt;-</span> tidy <span class="sc">%&gt;%</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(matrix) <span class="sc">%&gt;%</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  matsindf<span class="sc">::</span><span class="fu">collapse_to_matrices</span>(<span class="at">matnames =</span> <span class="st">&quot;matrix&quot;</span>, <span class="at">matvals =</span> <span class="st">&quot;vals&quot;</span>,</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">rownames =</span> <span class="st">&quot;row&quot;</span>, <span class="at">colnames =</span> <span class="st">&quot;col&quot;</span>,</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">rowtypes =</span> <span class="st">&quot;rowtype&quot;</span>, <span class="at">coltypes =</span> <span class="st">&quot;coltype&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">matrix.name =</span> matrix,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">matrix =</span> vals</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>mats</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   matrix.name     matrix</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1           A 1, 2, 3, 4</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2           B 8, 7, 6, 5</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>mats<span class="sc">$</span>matrix[[<span class="dv">1</span>]]</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  1  3</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  2  4</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>mats<span class="sc">$</span>matrix[[<span class="dv">2</span>]]</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  8  6</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  7  5</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
 </div>
 </div>
 <div id="using-matsbyname-with-matsindf" class="section level2">
@@ -672,58 +732,58 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>matsbyname</code> works well with lists, and</li>
 <li>data frame columns are implemented as lists, and</li>
 <li>the <tt>matsindf</tt> package can create data frames of matrices, and</li>
-<li>the <a href="http://tidyr.tidyverse.org">tidyr</a> and <a href="http://dplyr.tidyverse.org">dplyr</a> packages work with data frames,</li>
+<li>the <a href="https://tidyr.tidyverse.org">tidyr</a> and <a href="https://dplyr.tidyverse.org">dplyr</a> packages work with data frames,</li>
 </ul>
-<p><code>matsbyname</code> functions can be used with <a href="http://tidyr.tidyverse.org">tidyr</a> and <a href="http://dplyr.tidyverse.org">dplyr</a> functions (such as <code>spread</code> and <code>mutate</code>) to perform matrix algebra within data frames of matrices. A single <code>matsbyname</code> instruction performs the same operation on all rows of a <code>matsindf</code> data frame. Loops begone!</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>result &lt;-<span class="st"> </span>mats <span class="op">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">spread</span>(<span class="dt">key =</span> matrix.name, <span class="dt">value =</span> matrix) <span class="op">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3"></a><span class="st">  </span><span class="co"># Duplicate the row to demonstrate byname operating simultaneously</span></span>
-<span id="cb16-4"><a href="#cb16-4"></a><span class="st">  </span><span class="co"># on all rows of the data frame.</span></span>
-<span id="cb16-5"><a href="#cb16-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(., .) <span class="op">%&gt;%</span></span>
-<span id="cb16-6"><a href="#cb16-6"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</span>
-<span id="cb16-7"><a href="#cb16-7"></a>    <span class="co"># Create a column of constants.</span></span>
-<span id="cb16-8"><a href="#cb16-8"></a>    <span class="dt">c =</span> <span class="kw">make_list</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">lenx =</span> <span class="dv">2</span>),</span>
-<span id="cb16-9"><a href="#cb16-9"></a>    <span class="co"># Sum all rows of the data frame with a single instruction.</span></span>
-<span id="cb16-10"><a href="#cb16-10"></a>    <span class="dt">sum =</span> <span class="kw">sum_byname</span>(A, B),</span>
-<span id="cb16-11"><a href="#cb16-11"></a>    <span class="co"># Multiply matrices in the sum column by corresponding constants in the c column.</span></span>
-<span id="cb16-12"><a href="#cb16-12"></a>    <span class="dt">product =</span> <span class="kw">hadamardproduct_byname</span>(c, sum)</span>
-<span id="cb16-13"><a href="#cb16-13"></a>  )</span>
-<span id="cb16-14"><a href="#cb16-14"></a>result</span>
-<span id="cb16-15"><a href="#cb16-15"></a><span class="co">#&gt;            A          B c        sum        product</span></span>
-<span id="cb16-16"><a href="#cb16-16"></a><span class="co">#&gt; 1 1, 2, 3, 4 8, 7, 6, 5 1 9, 9, 9, 9     9, 9, 9, 9</span></span>
-<span id="cb16-17"><a href="#cb16-17"></a><span class="co">#&gt; 2 1, 2, 3, 4 8, 7, 6, 5 2 9, 9, 9, 9 18, 18, 18, 18</span></span>
-<span id="cb16-18"><a href="#cb16-18"></a>result<span class="op">$</span>sum[[<span class="dv">1</span>]]</span>
-<span id="cb16-19"><a href="#cb16-19"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb16-20"><a href="#cb16-20"></a><span class="co">#&gt; p1  9  9</span></span>
-<span id="cb16-21"><a href="#cb16-21"></a><span class="co">#&gt; p2  9  9</span></span>
-<span id="cb16-22"><a href="#cb16-22"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb16-23"><a href="#cb16-23"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb16-24"><a href="#cb16-24"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb16-25"><a href="#cb16-25"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb16-26"><a href="#cb16-26"></a>result<span class="op">$</span>sum[[<span class="dv">2</span>]]</span>
-<span id="cb16-27"><a href="#cb16-27"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb16-28"><a href="#cb16-28"></a><span class="co">#&gt; p1  9  9</span></span>
-<span id="cb16-29"><a href="#cb16-29"></a><span class="co">#&gt; p2  9  9</span></span>
-<span id="cb16-30"><a href="#cb16-30"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb16-31"><a href="#cb16-31"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb16-32"><a href="#cb16-32"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb16-33"><a href="#cb16-33"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb16-34"><a href="#cb16-34"></a>result<span class="op">$</span>product[[<span class="dv">1</span>]]</span>
-<span id="cb16-35"><a href="#cb16-35"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb16-36"><a href="#cb16-36"></a><span class="co">#&gt; p1  9  9</span></span>
-<span id="cb16-37"><a href="#cb16-37"></a><span class="co">#&gt; p2  9  9</span></span>
-<span id="cb16-38"><a href="#cb16-38"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb16-39"><a href="#cb16-39"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb16-40"><a href="#cb16-40"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb16-41"><a href="#cb16-41"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
-<span id="cb16-42"><a href="#cb16-42"></a>result<span class="op">$</span>product[[<span class="dv">2</span>]]</span>
-<span id="cb16-43"><a href="#cb16-43"></a><span class="co">#&gt;    i1 i2</span></span>
-<span id="cb16-44"><a href="#cb16-44"></a><span class="co">#&gt; p1 18 18</span></span>
-<span id="cb16-45"><a href="#cb16-45"></a><span class="co">#&gt; p2 18 18</span></span>
-<span id="cb16-46"><a href="#cb16-46"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
-<span id="cb16-47"><a href="#cb16-47"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
-<span id="cb16-48"><a href="#cb16-48"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
-<span id="cb16-49"><a href="#cb16-49"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
+<p><code>matsbyname</code> functions can be used with <a href="https://tidyr.tidyverse.org">tidyr</a> and <a href="https://dplyr.tidyverse.org">dplyr</a> functions (such as <code>spread</code> and <code>mutate</code>) to perform matrix algebra within data frames of matrices. A single <code>matsbyname</code> instruction performs the same operation on all rows of a <code>matsindf</code> data frame. Loops begone!</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> mats <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">spread</span>(<span class="at">key =</span> matrix.name, <span class="at">value =</span> matrix) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Duplicate the row to demonstrate byname operating simultaneously</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># on all rows of the data frame.</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(., .) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a column of constants.</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">c =</span> <span class="fu">make_list</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">n =</span> <span class="dv">2</span>, <span class="at">lenx =</span> <span class="dv">2</span>),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sum all rows of the data frame with a single instruction.</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sum =</span> <span class="fu">sum_byname</span>(A, B),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Multiply matrices in the sum column by corresponding constants in the c column.</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">product =</span> <span class="fu">hadamardproduct_byname</span>(c, sum)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>result</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            A          B c        sum        product</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 1, 2, 3, 4 8, 7, 6, 5 1 9, 9, 9, 9     9, 9, 9, 9</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 1, 2, 3, 4 8, 7, 6, 5 2 9, 9, 9, 9 18, 18, 18, 18</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>sum[[<span class="dv">1</span>]]</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  9  9</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  9  9</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>sum[[<span class="dv">2</span>]]</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  9  9</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  9  9</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>product[[<span class="dv">1</span>]]</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  9  9</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2  9  9</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>product[[<span class="dv">2</span>]]</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    i1 i2</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1 18 18</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p2 18 18</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;rowtype&quot;)</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;coltype&quot;)</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
 </div>
 <div id="suggested-workflow-using-matsbyname-and-matsindf" class="section level2">
 <h2>Suggested workflow using <tt>matsbyname</tt> and <tt>matsindf</tt></h2>
@@ -742,7 +802,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
-<p>The <tt>matsbyname</tt> package simplifies analyses in which row and column names ought to be respected. It provides optional row and column types, thereby ensuring that only valid matrix operations are performed. Finally, <tt>matsbyname</tt> functions work equally well with lists to allow use of <tt>*_byname</tt> functions with <a href="http://tidyr.tidyverse.org"><tt>tidyr</tt></a> and <a href="http://dplyr.tidyverse.org"><tt>dplyr</tt></a> approaches to manipulating data.</p>
+<p>The <tt>matsbyname</tt> package simplifies analyses in which row and column names ought to be respected. It provides optional row and column types, thereby ensuring that only valid matrix operations are performed. Finally, <tt>matsbyname</tt> functions work equally well with lists to allow use of <tt>*_byname</tt> functions with <a href="https://tidyr.tidyverse.org"><tt>tidyr</tt></a> and <a href="https://dplyr.tidyverse.org"><tt>dplyr</tt></a> approaches to manipulating data.</p>
 </div>
 
 

@@ -14,23 +14,83 @@
 
 <title>About Vector Arguments</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -50,7 +110,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -310,114 +370,114 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="an-example" class="section level2">
 <h2>An example</h2>
 <p>To see how the <code>.FUNdots</code> argument works, let’s make an example function that takes advantage of <code>unaryapply_byname()</code>. <code>mysum()</code> adds entries in matrix <code>a</code>, the result depending upon the value of <code>margin</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>mysum &lt;-<span class="st"> </span><span class="cf">function</span>(a, <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)) {</span>
-<span id="cb1-2"><a href="#cb1-2"></a>  sum_func &lt;-<span class="st"> </span><span class="cf">function</span>(a_mat, margin) {</span>
-<span id="cb1-3"><a href="#cb1-3"></a>    <span class="co"># When we get here, we will have a single matrix a</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>    <span class="cf">if</span> (<span class="dv">1</span> <span class="op">%in%</span><span class="st"> </span>margin <span class="op">&amp;</span><span class="st"> </span><span class="dv">2</span> <span class="op">%in%</span><span class="st"> </span>margin) {</span>
-<span id="cb1-5"><a href="#cb1-5"></a>      <span class="kw">return</span>(<span class="kw">sum</span>(a_mat))</span>
-<span id="cb1-6"><a href="#cb1-6"></a>    }</span>
-<span id="cb1-7"><a href="#cb1-7"></a>    <span class="cf">if</span> (margin <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {</span>
-<span id="cb1-8"><a href="#cb1-8"></a>      <span class="kw">return</span>(<span class="kw">rowSums</span>(a_mat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="kw">nrow</span>(a_mat)))</span>
-<span id="cb1-9"><a href="#cb1-9"></a>    }</span>
-<span id="cb1-10"><a href="#cb1-10"></a>    <span class="cf">if</span> (margin <span class="op">==</span><span class="st"> </span><span class="dv">2</span>) {</span>
-<span id="cb1-11"><a href="#cb1-11"></a>      <span class="kw">return</span>(<span class="kw">colSums</span>(a_mat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="kw">ncol</span>(a_mat)))</span>
-<span id="cb1-12"><a href="#cb1-12"></a>    }</span>
-<span id="cb1-13"><a href="#cb1-13"></a>  }</span>
-<span id="cb1-14"><a href="#cb1-14"></a>  <span class="kw">unaryapply_byname</span>(sum_func, a, <span class="dt">.FUNdots =</span> <span class="kw">list</span>(<span class="dt">margin =</span> margin))</span>
-<span id="cb1-15"><a href="#cb1-15"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>mysum <span class="ot">&lt;-</span> <span class="cf">function</span>(a, <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  sum_func <span class="ot">&lt;-</span> <span class="cf">function</span>(a_mat, margin) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When we get here, we will have a single matrix a</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="dv">1</span> <span class="sc">%in%</span> margin <span class="sc">&amp;</span> <span class="dv">2</span> <span class="sc">%in%</span> margin) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">sum</span>(a_mat))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (margin <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">rowSums</span>(a_mat) <span class="sc">%&gt;%</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="fu">nrow</span>(a_mat)))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (margin <span class="sc">==</span> <span class="dv">2</span>) {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">colSums</span>(a_mat) <span class="sc">%&gt;%</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="fu">ncol</span>(a_mat)))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unaryapply_byname</span>(sum_func, a, <span class="at">.FUNdots =</span> <span class="fu">list</span>(<span class="at">margin =</span> margin))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Structuring <code>mysum()</code> as shown above provides several interesting capabilities. First, <code>mysum()</code> works with single matrices.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>m &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">nrow =</span> <span class="dv">2</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a>m</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; [1,]    1    2</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; [2,]    3    4</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="co"># Works for single matrices</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">mysum</span>(m, <span class="dt">margin =</span> <span class="dv">1</span>)</span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="kw">mysum</span>(m, <span class="dt">margin =</span> <span class="dv">2</span>)</span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; [1,]    4    6</span></span>
-<span id="cb2-14"><a href="#cb2-14"></a><span class="kw">mysum</span>(m, <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb2-15"><a href="#cb2-15"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>m</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    2</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    3    4</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Works for single matrices</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(m, <span class="at">margin =</span> <span class="dv">1</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(m, <span class="at">margin =</span> <span class="dv">2</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(m, <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
 <p>Second, <code>mysum()</code> works with lists.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Works for lists of matrices</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">mysum</span>(<span class="kw">list</span>(<span class="dt">one =</span> m, <span class="dt">two =</span> m), <span class="dt">margin =</span> <span class="dv">1</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt; $one</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; </span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; $two</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="kw">mysum</span>(<span class="kw">list</span>(<span class="dt">one =</span> m, <span class="dt">two =</span> m), <span class="dt">margin =</span> <span class="dv">2</span>)</span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt; $one</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt; [1,]    4    6</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; </span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="co">#&gt; $two</span></span>
-<span id="cb3-18"><a href="#cb3-18"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb3-19"><a href="#cb3-19"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Works for lists of matrices</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(<span class="fu">list</span>(<span class="at">one =</span> m, <span class="at">two =</span> m), <span class="at">margin =</span> <span class="dv">1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $one</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $two</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(<span class="fu">list</span>(<span class="at">one =</span> m, <span class="at">two =</span> m), <span class="at">margin =</span> <span class="dv">2</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $one</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $two</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
 <p>Finally, <code>mysum()</code> works within data frames.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Works in data frames and tibbles</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a>DF &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(<span class="dt">mcol =</span> <span class="kw">list</span>(m, m, m))</span>
-<span id="cb4-3"><a href="#cb4-3"></a>res &lt;-<span class="st"> </span>DF <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</span>
-<span id="cb4-5"><a href="#cb4-5"></a>    <span class="dt">rsums =</span> <span class="kw">mysum</span>(mcol, <span class="dt">margin =</span> <span class="dv">1</span>), </span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="dt">csums =</span> <span class="kw">mysum</span>(mcol, <span class="dt">margin =</span> <span class="dv">2</span>)</span>
-<span id="cb4-7"><a href="#cb4-7"></a>  )</span>
-<span id="cb4-8"><a href="#cb4-8"></a>res<span class="op">$</span>rsums</span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; </span></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt; </span></span>
-<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb4-21"><a href="#cb4-21"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb4-22"><a href="#cb4-22"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb4-23"><a href="#cb4-23"></a>res<span class="op">$</span>csums</span>
-<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb4-25"><a href="#cb4-25"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb4-26"><a href="#cb4-26"></a><span class="co">#&gt; [1,]    4    6</span></span>
-<span id="cb4-27"><a href="#cb4-27"></a><span class="co">#&gt; </span></span>
-<span id="cb4-28"><a href="#cb4-28"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb4-29"><a href="#cb4-29"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb4-30"><a href="#cb4-30"></a><span class="co">#&gt; [1,]    4    6</span></span>
-<span id="cb4-31"><a href="#cb4-31"></a><span class="co">#&gt; </span></span>
-<span id="cb4-32"><a href="#cb4-32"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb4-33"><a href="#cb4-33"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb4-34"><a href="#cb4-34"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Works in data frames and tibbles</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>DF <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">mcol =</span> <span class="fu">list</span>(m, m, m))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> DF <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rsums =</span> <span class="fu">mysum</span>(mcol, <span class="at">margin =</span> <span class="dv">1</span>), </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">csums =</span> <span class="fu">mysum</span>(mcol, <span class="at">margin =</span> <span class="dv">2</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>rsums</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>csums</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
 </div>
 <div id="the-problem" class="section level2">
 <h2>The problem</h2>
 <p>In the above examples, <code>margin</code> was only <code>1</code> or <code>2</code>, not <code>c(1, 2)</code> for the list and data frame examples. Let’s see what happens when <code>margin = c(1, 2)</code> and <code>a</code> is a list.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">tryCatch</span>(<span class="kw">mysum</span>(<span class="kw">list</span>(m, m, m), <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)), </span>
-<span id="cb5-2"><a href="#cb5-2"></a>         <span class="dt">error =</span> <span class="cf">function</span>(e) {<span class="kw">strwrap</span>(e, <span class="dt">width =</span> <span class="dv">60</span>)})</span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; [1] &quot;Error: In prepare_.FUNdots(), when &#39;a&#39; is a list, but an&quot;   </span></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; [2] &quot;entry in &#39;.FUNdots&#39; is not a list, every top-level argument&quot;</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; [3] &quot;in .FUNdots must be NULL or have length = 1 or length =&quot;    </span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; [4] &quot;length(a) (= 3). Found length = 2 for argument &#39;margin&#39;,&quot;   </span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; [5] &quot;which is not a list. Consider converting argument &#39;margin&#39;&quot; </span></span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; [6] &quot;into a list of length 1.&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">mysum</span>(<span class="fu">list</span>(m, m, m), <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)), </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">error =</span> <span class="cf">function</span>(e) {<span class="fu">strwrap</span>(e, <span class="at">width =</span> <span class="dv">60</span>)})</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Error: In prepare_.FUNdots(), when &#39;a&#39; is a list, but an&quot;   </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] &quot;entry in &#39;.FUNdots&#39; is not a list, every top-level argument&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;in .FUNdots must be NULL or have length = 1 or length =&quot;    </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;length(a) (= 3). Found length = 2 for argument &#39;margin&#39;,&quot;   </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] &quot;which is not a list. Consider converting argument &#39;margin&#39;&quot; </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [6] &quot;into a list of length 1.&quot;</span></span></code></pre></div>
 <p>To understand better what is happening, let’s try when the list argument to <code>mysum()</code> has length <code>2</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">mysum</span>(<span class="kw">list</span>(m, m), <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; </span></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(<span class="fu">list</span>(m, m), <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
 <p><code>margin = c(1, 2)</code> is interpreted by <code>unaryapply_byname()</code> as &quot;use <code>margin = 1</code> for the first <code>m</code> in the list, and use <code>margin = 2</code> for the second <code>m</code> in the list.</p>
 <p>Now we see why passing <code>margin = c(1, 2)</code> failed for a list of length <code>3</code> (<code>list(m, m, m)</code>): <code>unaryapply_byname()</code> applied <code>margin = 1</code> for the first <code>m</code>, <code>margin = 2</code> for the second <code>m</code>. But the third <code>m</code> had no margin available for it.</p>
 <p>We also see why passing <code>margin = c(1, 2)</code> was successful for a list of length <code>2</code> (<code>list(m, m)</code>): <code>unaryapply_byname()</code> applied <code>margin = 1</code> for the first <code>m</code>, <code>margin = 2</code> for the second <code>m</code>. In that case, we had exactly as many items in margin (2) as items in the list passed to <code>a</code> (2).</p>
@@ -434,57 +494,57 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="wrap-vector-arguments-in-a-list" class="section level3">
 <h3>Wrap vector arguments in a list</h3>
 <p>If the caller is more specific, flexibility is gained. By wrapping <code>c(1, 2)</code> in a <code>list()</code>, the caller indicates “Take this margin (<code>c(1, 2)</code>), replicate it as many times as we have items in our <code>a</code> list, using one <code>c(1, 2)</code> for each item in the list.”</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">mysum</span>(<span class="kw">list</span>(m, m, m), <span class="dt">margin =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; [1] 10</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; </span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; [1] 10</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; </span></span>
-<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(<span class="fu">list</span>(m, m, m), <span class="at">margin =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
 <p>The caller can also supply different <code>margin</code>s for each item in the list of matrices.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">mysum</span>(<span class="kw">list</span>(m, m, m), <span class="dt">margin =</span> <span class="kw">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; </span></span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; [1,]    4    6</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; </span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum</span>(<span class="fu">list</span>(m, m, m), <span class="at">margin =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
 <p>But the caller must provide either <code>1</code> or <code>length(a)</code> items in the <code>margin</code> argument, else an error is emitted.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">tryCatch</span>(<span class="kw">mysum</span>(<span class="kw">list</span>(m, m, m), <span class="dt">margin =</span> <span class="kw">list</span>(<span class="dv">1</span>, <span class="dv">2</span>)), </span>
-<span id="cb9-2"><a href="#cb9-2"></a>         <span class="dt">error =</span> <span class="cf">function</span>(e) {<span class="kw">strwrap</span>(e, <span class="dt">width =</span> <span class="dv">60</span>)})</span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="co">#&gt; [1] &quot;Error: In prepare_.FUNdots(), when both &#39;a&#39; and &#39;.FUNdots&#39;&quot;</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt; [2] &quot;are lists, each top-level argument in .FUNdots must have&quot;  </span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; [3] &quot;length = 1 or length = length(a) (= 3). Found length = 2&quot;  </span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; [4] &quot;for argument &#39;margin&#39;, which is a list. Consider wrapping&quot; </span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; [5] &quot;argument &#39;margin&#39; in a list().&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">mysum</span>(<span class="fu">list</span>(m, m, m), <span class="at">margin =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>)), </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">error =</span> <span class="cf">function</span>(e) {<span class="fu">strwrap</span>(e, <span class="at">width =</span> <span class="dv">60</span>)})</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Error: In prepare_.FUNdots(), when both &#39;a&#39; and &#39;.FUNdots&#39;&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] &quot;are lists, each top-level argument in .FUNdots must have&quot;  </span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;length = 1 or length = length(a) (= 3). Found length = 2&quot;  </span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;for argument &#39;margin&#39;, which is a list. Consider wrapping&quot; </span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] &quot;argument &#39;margin&#39; in a list().&quot;</span></span></code></pre></div>
 </div>
 <div id="use-the-prep_vector_arg-function" class="section level3">
 <h3>Use the <code>prep_vector_arg()</code> function</h3>
 <p>To the extent possible, programmers should remove burdens on users of their functions. So, it would be helpful if there were a way to automatically wrap vector arguments in lists. To that end, <code>matsbyname</code> includes the <code>prep_vector_arg()</code> function. <code>prep_vector_arg()</code> uses heuristics to wrap vector arguments in lists, if needed and when possible.</p>
 <p><code>mysum2()</code> demonstrates the use of <code>prep_vector_arg()</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>mysum2 &lt;-<span class="st"> </span><span class="cf">function</span>(a, <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)) {</span>
-<span id="cb10-2"><a href="#cb10-2"></a>  margin &lt;-<span class="st"> </span><span class="kw">prep_vector_arg</span>(a, margin)</span>
-<span id="cb10-3"><a href="#cb10-3"></a>  sum_func &lt;-<span class="st"> </span><span class="cf">function</span>(a_mat, margin) {</span>
-<span id="cb10-4"><a href="#cb10-4"></a>    <span class="co"># When we get here, we will have a single matrix a</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a>    <span class="cf">if</span> (<span class="dv">1</span> <span class="op">%in%</span><span class="st"> </span>margin <span class="op">&amp;</span><span class="st"> </span><span class="dv">2</span> <span class="op">%in%</span><span class="st"> </span>margin) {</span>
-<span id="cb10-6"><a href="#cb10-6"></a>      <span class="kw">return</span>(<span class="kw">sum</span>(a_mat))</span>
-<span id="cb10-7"><a href="#cb10-7"></a>    }</span>
-<span id="cb10-8"><a href="#cb10-8"></a>    <span class="cf">if</span> (margin <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {</span>
-<span id="cb10-9"><a href="#cb10-9"></a>      <span class="kw">return</span>(<span class="kw">rowSums</span>(a_mat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="kw">nrow</span>(a_mat)))</span>
-<span id="cb10-10"><a href="#cb10-10"></a>    }</span>
-<span id="cb10-11"><a href="#cb10-11"></a>    <span class="cf">if</span> (margin <span class="op">==</span><span class="st"> </span><span class="dv">2</span>) {</span>
-<span id="cb10-12"><a href="#cb10-12"></a>      <span class="kw">return</span>(<span class="kw">colSums</span>(a_mat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="kw">ncol</span>(a_mat)))</span>
-<span id="cb10-13"><a href="#cb10-13"></a>    }</span>
-<span id="cb10-14"><a href="#cb10-14"></a>  }</span>
-<span id="cb10-15"><a href="#cb10-15"></a>  <span class="kw">unaryapply_byname</span>(sum_func, a, <span class="dt">.FUNdots =</span> <span class="kw">list</span>(<span class="dt">margin =</span> margin))</span>
-<span id="cb10-16"><a href="#cb10-16"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mysum2 <span class="ot">&lt;-</span> <span class="cf">function</span>(a, <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  margin <span class="ot">&lt;-</span> <span class="fu">prep_vector_arg</span>(a, margin)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  sum_func <span class="ot">&lt;-</span> <span class="cf">function</span>(a_mat, margin) {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When we get here, we will have a single matrix a</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="dv">1</span> <span class="sc">%in%</span> margin <span class="sc">&amp;</span> <span class="dv">2</span> <span class="sc">%in%</span> margin) {</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">sum</span>(a_mat))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (margin <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">rowSums</span>(a_mat) <span class="sc">%&gt;%</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="fu">nrow</span>(a_mat)))</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (margin <span class="sc">==</span> <span class="dv">2</span>) {</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">colSums</span>(a_mat) <span class="sc">%&gt;%</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="fu">ncol</span>(a_mat)))</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unaryapply_byname</span>(sum_func, a, <span class="at">.FUNdots =</span> <span class="fu">list</span>(<span class="at">margin =</span> margin))</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>If</p>
 <ul>
 <li>argument <code>a</code> is a list,</li>
@@ -492,75 +552,75 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li>the vector argument’s length is greater than 1 but not equal to the length of a,</li>
 </ul>
 <p>then <code>prep_vector_arg()</code> wraps the vector argument (in this case <code>margin</code>) in a <code>list()</code>, thereby relieving the caller of having to remember to make it into a <code>list</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">mysum2</span>(<span class="kw">list</span>(m, m, m), <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; [1] 10</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; </span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; [1] 10</span></span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; </span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum2</span>(<span class="fu">list</span>(m, m, m), <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
 <p>Note that if the length of the vector argument is equal to the length of the list in <code>a</code>, the caller’s intention is ambiguous, and the vector argument is passed without modification.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">mysum2</span>(<span class="kw">list</span>(m, m), <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&gt; </span></span>
-<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum2</span>(<span class="fu">list</span>(m, m), <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
 <p>If the caller wants <code>c(1, 2)</code> to be applied to each item in the <code>a</code> list, the caller must wrap <code>c(1, 2)</code> in a list.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">mysum2</span>(<span class="kw">list</span>(m, m), <span class="dt">margin =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="co">#&gt; [1] 10</span></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="co">#&gt; </span></span>
-<span id="cb13-5"><a href="#cb13-5"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mysum2</span>(<span class="fu">list</span>(m, m), <span class="at">margin =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
 </div>
 <div id="use-a-data-frame" class="section level3">
 <h3>Use a data frame</h3>
 <p>The reason <code>prep_vector_arg()</code> cannot <em>always</em> wrap vector arguments in a list is that data frame columns are extracted as vectors when they are atomic.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>DF2 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(<span class="dt">mcol =</span> <span class="kw">list</span>(m, m), <span class="dt">margin =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb14-2"><a href="#cb14-2"></a>DF2</span>
-<span id="cb14-3"><a href="#cb14-3"></a><span class="co">#&gt; # A tibble: 2 x 2</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a><span class="co">#&gt;   mcol              margin</span></span>
-<span id="cb14-5"><a href="#cb14-5"></a><span class="co">#&gt;   &lt;list&gt;             &lt;dbl&gt;</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a><span class="co">#&gt; 1 &lt;int[,2] [2 × 2]&gt;      1</span></span>
-<span id="cb14-7"><a href="#cb14-7"></a><span class="co">#&gt; 2 &lt;int[,2] [2 × 2]&gt;      2</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a>DF2<span class="op">$</span>margin <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">class</span>()</span>
-<span id="cb14-9"><a href="#cb14-9"></a><span class="co">#&gt; [1] &quot;numeric&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>DF2 <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">mcol =</span> <span class="fu">list</span>(m, m), <span class="at">margin =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>DF2</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 x 2</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   mcol              margin</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;list&gt;             &lt;dbl&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 &lt;int[,2] [2 × 2]&gt;      1</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 &lt;int[,2] [2 × 2]&gt;      2</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>DF2<span class="sc">$</span>margin <span class="sc">%&gt;%</span> <span class="fu">class</span>()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;numeric&quot;</span></span></code></pre></div>
 <p>It would be a mistake to wrap <code>DF2$margin</code> in a <code>list()</code> for the following call to <code>mysum2</code>, because the caller’s intent is clearly &quot;apply <code>margin = 1</code> for the first row and <code>margin = 2</code> for the second row.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>res2 &lt;-<span class="st"> </span>DF2 <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</span>
-<span id="cb15-3"><a href="#cb15-3"></a>    <span class="dt">sums =</span> <span class="kw">mysum2</span>(mcol, <span class="dt">margin =</span> margin)</span>
-<span id="cb15-4"><a href="#cb15-4"></a>  )</span>
-<span id="cb15-5"><a href="#cb15-5"></a>res2<span class="op">$</span>sums</span>
-<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb15-10"><a href="#cb15-10"></a><span class="co">#&gt; </span></span>
-<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt;      [,1] [,2]</span></span>
-<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>res2 <span class="ot">&lt;-</span> DF2 <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sums =</span> <span class="fu">mysum2</span>(mcol, <span class="at">margin =</span> margin)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>res2<span class="sc">$</span>sums</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    4    6</span></span></code></pre></div>
 <p>The good news is that within the context of a data frame, the caller’s intent is unambiguous.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>DF3 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(<span class="dt">mcol =</span> <span class="kw">list</span>(m, m, m), <span class="dt">margin =</span> <span class="kw">list</span>(<span class="dv">1</span>, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</span>
-<span id="cb16-3"><a href="#cb16-3"></a>    <span class="dt">sumcol =</span> <span class="kw">mysum2</span>(mcol, <span class="dt">margin =</span> margin)</span>
-<span id="cb16-4"><a href="#cb16-4"></a>  )</span>
-<span id="cb16-5"><a href="#cb16-5"></a>DF3<span class="op">$</span>sumcol</span>
-<span id="cb16-6"><a href="#cb16-6"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb16-7"><a href="#cb16-7"></a><span class="co">#&gt;      [,1]</span></span>
-<span id="cb16-8"><a href="#cb16-8"></a><span class="co">#&gt; [1,]    3</span></span>
-<span id="cb16-9"><a href="#cb16-9"></a><span class="co">#&gt; [2,]    7</span></span>
-<span id="cb16-10"><a href="#cb16-10"></a><span class="co">#&gt; </span></span>
-<span id="cb16-11"><a href="#cb16-11"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb16-12"><a href="#cb16-12"></a><span class="co">#&gt; [1] 10</span></span>
-<span id="cb16-13"><a href="#cb16-13"></a><span class="co">#&gt; </span></span>
-<span id="cb16-14"><a href="#cb16-14"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb16-15"><a href="#cb16-15"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>DF3 <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">mcol =</span> <span class="fu">list</span>(m, m, m), <span class="at">margin =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sumcol =</span> <span class="fu">mysum2</span>(mcol, <span class="at">margin =</span> margin)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>DF3<span class="sc">$</span>sumcol</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    3</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    7</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
 </div>
 </div>
 <div id="summary" class="section level2">
