@@ -1,3 +1,26 @@
+# matsbyname 0.4.18 (2021-06-02)
+
+* New function `kvec_from_template_byname()` that creates a row or column
+  vector from a template matrix.
+* New function `create_colvec_byname()` builds on 
+  `create_matrix_byname()`.
+* New function `create_rowvec_byname()` builds on 
+  `create_matrix_byname()`.
+* New function `create_matrix_byname()` that behaves
+  much like `matrix()` with "byname" characteristics.
+* New tests for new functions.  
+    - Now up to 1000 tests, all passing.
+    - Test coverage remains at 100 %.
+
+
+# matsbyname 0.4.17 (2021-04-10)
+
+* Transition to GitHub actions for continuous integration.
+* No new tests.
+    * Still at 906 tests, all passing.
+    * Test coverage remains at 100 %.
+
+
 # matsbyname 0.4.16 (2020-11-25)
 
 * Moved URLs to `https://` where appropriate.
@@ -14,7 +37,7 @@
   `length of 'dimnames' [1] not equal to array extent`.
   The solution is to check for 1x1 vectors and act accordingly.
 * Fixed a warning emitted from `stringi`.
-* New tests for big fixes.  
+* New tests for bug fixes.  
   Now up to 906 tests, all passing.
 * Test coverage remains at 100 %.
 
