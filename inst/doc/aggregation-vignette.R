@@ -64,6 +64,38 @@ rename_to_piece_byname(m_pieces, piece = "suff", margin = 2,
 
 ## -----------------------------------------------------------------------------
 m_pieces
+rename_to_piece_byname(m_pieces, piece = "pref", margin = 1)
+
+## -----------------------------------------------------------------------------
+rename_to_piece_byname(m_pieces, piece = "pref", margin = c(1, 2))
+
+## -----------------------------------------------------------------------------
+rename_to_piece_byname(m_pieces, piece = "pref")
+rename_to_piece_byname(m_pieces, piece = "suff")
+
+## -----------------------------------------------------------------------------
+rename_to_piece_byname(m_pieces, piece = "suff", choose_most_specific = TRUE)
+
+## -----------------------------------------------------------------------------
+rename_to_piece_byname(m_pieces, piece = "noun")
+
+## -----------------------------------------------------------------------------
+m_pieces_with_types <- m_pieces %>% 
+  setrowtype("Product") %>% setcoltype("Industry")
+m_pieces_with_types
+m_pieces_with_types %>% 
+  rename_to_piece_byname(piece = "pref", margin = "Product")
+m_pieces_with_types %>% 
+  rename_to_piece_byname(piece = "suff", margin = "Product")
+m_pieces_with_types %>% 
+  rename_to_piece_byname(piece = "from", margin = "Product")
+m_pieces_with_types %>% 
+  rename_to_piece_byname(piece = "suff", margin = "Product", choose_most_specific = TRUE)
+m_pieces_with_types %>% 
+  rename_to_piece_byname(piece = "suff", margin = "Industry")
+
+## -----------------------------------------------------------------------------
+m_pieces
 # Aggregate Electricity in rows
 aggregate_pieces_byname(m_pieces, piece = "pref", margin = 1, 
                         notation = RCLabels::bracket_notation)

@@ -139,7 +139,7 @@ result <- mats %>%
   dplyr::bind_rows(., .) %>%
   dplyr::mutate(
     # Create a column of constants.
-    c = make_list(x = 1:2, n = 2, lenx = 2),
+    c = RCLabels::make_list(x = 1:2, n = 2, lenx = 2),
     # Sum all rows of the data frame with a single instruction.
     sum = sum_byname(A, B),
     # Multiply matrices in the sum column by corresponding constants in the c column.
