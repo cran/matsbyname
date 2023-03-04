@@ -12,7 +12,7 @@
 
 <meta name="author" content="Matthew Kuperus Heun" />
 
-<meta name="date" content="2023-01-16" />
+<meta name="date" content="2023-03-04" />
 
 <title>Use Cases and Examples for matsbyname</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Use Cases and Examples for
 <code>matsbyname</code></h1>
 <h4 class="author">Matthew Kuperus Heun</h4>
-<h4 class="date">2023-01-16</h4>
+<h4 class="date">2023-03-04</h4>
 
 
 
@@ -389,7 +389,7 @@ in <code>R</code> and other languages.</p>
 <h3>Problem 1</h3>
 <p>Although built-in matrix functions ensure size conformity of matrix
 operands, they do not respect the names of rows and columns (known as
-<tt>dimnames</tt> in <tt>R</tt>). In the following example,
+<code>dimnames</code> in <code>R</code>). In the following example,
 <strong>U</strong> represents a <em>use</em> matrix that contains the
 quantity of each product used by each industry, and <strong>Y</strong>
 represents a <em>final demand</em> matrix that contains the quantity of
@@ -489,19 +489,19 @@ example.</p>
 </div>
 <div id="problem-3" class="section level3">
 <h3>Problem 3</h3>
-<p>Matrix functions provided by <tt>R</tt> and other languages do not
-ensure type conformity for matrix operands to matrix algebra functions.
-In the example of matrix multiplication, columns of the multiplicand
-must contain the same type of information as the as the rows of the
-multiplier. If the columns of <strong>A</strong> are countries, then the
-rows of <strong>B</strong> must also be countries (and in the same
-order) if <strong>A</strong> <tt>%*%</tt> <strong>B</strong> is to make
-sense.</p>
+<p>Matrix functions provided by <code>R</code> and other languages do
+not ensure type conformity for matrix operands to matrix algebra
+functions. In the example of matrix multiplication, columns of the
+multiplicand must contain the same type of information as the as the
+rows of the multiplier. If the columns of <strong>A</strong> are
+countries, then the rows of <strong>B</strong> must also be countries
+(and in the same order) if <strong>A</strong> <code>%*%</code>
+<strong>B</strong> is to make sense.</p>
 </div>
 </div>
 <div id="matsbyname" class="section level2">
-<h2><tt>matsbyname</tt></h2>
-<p>The <tt>matsbyname</tt> package automatically addresses all three
+<h2><code>matsbyname</code></h2>
+<p>The <code>matsbyname</code> package automatically addresses all three
 problems above. It performs smart matrix operations that</p>
 <ul>
 <li>respect row and column names
@@ -531,10 +531,10 @@ in the following example.</p>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    p1   p2</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i1 -2  1.5</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; i2  1 -0.5</span></span></code></pre></div>
-<p>In addition to <tt>sum_byname</tt> and <tt>clean_byname</tt>, the
-<tt>matsbyname</tt> package contains many additional matrix algebra
-functions that respect the names of rows and columns. Commonly-used
-functions are:</p>
+<p>In addition to <code>sum_byname()</code> and
+<code>clean_byname()</code>, the <code>matsbyname</code> package
+contains many additional matrix algebra functions that respect the names
+of rows and columns. Commonly-used functions are:</p>
 <ul>
 <li><code>sum_byname()</code></li>
 <li><code>difference_byname()</code></li>
@@ -546,31 +546,32 @@ functions are:</p>
 <li><code>invert_byname()</code>, and</li>
 <li><code>transpose_byname()</code>.</li>
 </ul>
-<p>The full list of functions can be found with <tt>?matsbyname</tt> and
-clicking the <tt>Index</tt> link.</p>
-<p>Furthermore, <tt>matsbyname</tt> works well with its sister package,
-<tt>matsindf</tt>. <tt>matsindf</tt> creates data frames whose entries
-are not numbers but entire matrices, thereby enabling the use of
-<tt>matsbyname</tt> functions in <a href="https://www.tidyverse.org"><tt>tidyverse</tt></a> functional
+<p>The full list of functions can be found with <code>?matsbyname</code>
+and clicking the <code>Index</code> link.</p>
+<p>Furthermore, <code>matsbyname</code> works well with its sister
+package, <code>matsindf</code>. <code>matsindf</code> creates data
+frames whose entries are not numbers but entire matrices, thereby
+enabling the use of <code>matsbyname</code> functions in <a href="https://www.tidyverse.org"><code>tidyverse</code></a> functional
 programming.</p>
-<p>When used together, <tt>matsbyname</tt> and <tt>matsindf</tt> allow
-analysts to wield simultaneously the power of both <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">matrix
-mathematics</a> and <a href="https://www.tidyverse.org"><tt>tidyverse</tt></a> functional
+<p>When used together, <code>matsbyname</code> and <code>matsindf</code>
+allow analysts to wield simultaneously the power of both <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">matrix
+mathematics</a> and <a href="https://www.tidyverse.org"><code>tidyverse</code></a> functional
 programming.</p>
 <p>This vignette demonstrates the power of matrix mathematics performed
-<tt>by name</tt>.</p>
+<code>byname</code>.</p>
 </div>
 <div id="matsbyname-features" class="section level2">
-<h2><tt>matsbyname</tt> features</h2>
-<p>The <tt>matsbyname</tt> package has several features that both
+<h2><code>matsbyname</code> features</h2>
+<p>The <code>matsbyname</code> package has several features that both
 simplify analyses and ensure their correctness.</p>
 <div id="setting-row-and-column-names" class="section level3">
 <h3>Setting row and column names</h3>
 <p>In the preceding examples, row and column names were provided by the
-<tt>dimnames</tt> argument to the <tt>matrix</tt> function. However,
-<tt>matsbyname</tt> provides the <tt>setcolnames_byname</tt> and
-<tt>setrownames_byname</tt> functions to perform the same tasks using
-the pipe operator (<tt>%&gt;%</tt>).</p>
+<code>dimnames</code> argument to the <code>matrix()</code> function.
+However, <code>matsbyname</code> provides the
+<code>setcolnames_byname()</code> and <code>setrownames_byname()</code>
+functions to perform the same tasks using the pipe operator
+(<code>%&gt;%</code> or <code>|&gt;</code>).</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>U_2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrownames_byname</span>(productnames) <span class="sc">%&gt;%</span> <span class="fu">setcolnames_byname</span>(industrynames)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>U_2</span>
@@ -584,16 +585,17 @@ the pipe operator (<tt>%&gt;%</tt>).</p>
 types are to matrices in matrix algebra as units are to scalars in
 scalar algebra. Just as careful tracking of units is necessary in scalar
 calculations, careful tracking of row and column types is necessary in
-matrix operations. Because <tt>matsbyname</tt> keeps track of row and
-column types automatically, much of the burden of dealing with row and
-column types is removed from the analyst.</p>
+matrix operations. Because <code>matsbyname</code> keeps track of row
+and column types automatically, much of the burden of dealing with row
+and column types is removed from the analyst.</p>
 <p>Row and column types are character strings stored as attributes of
-the matrix object, and <tt>matsbyname</tt> functions ensure correctness
-of matrix operations by checking row and column types, throwing errors
-if needed. Row and column types can be set by the functions
-<tt>setrowtype</tt> and <tt>setcoltype</tt> and retrieved by the
-functions <tt>rowtype</tt> and <tt>coltype</tt>. Consider matrices
-<strong>A</strong>, <strong>B</strong>, and <strong>C</strong>:</p>
+the matrix object, and <code>matsbyname</code> functions ensure
+correctness of matrix operations by checking row and column types,
+throwing errors if needed. Row and column types can be set by the
+functions <code>setrowtype()</code> and <code>setcoltype()</code> and
+retrieved by the functions <code>rowtype()</code> and
+<code>coltype()</code>. Consider matrices <strong>A</strong>,
+<strong>B</strong>, and <strong>C</strong>:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrownames_byname</span>(productnames) <span class="sc">%&gt;%</span> <span class="fu">setcolnames_byname</span>(industrynames) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setrowtype</span>(<span class="st">&quot;Products&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">setcoltype</span>(<span class="st">&quot;Industries&quot;</span>)</span>
@@ -673,8 +675,9 @@ summed: row and column types agree.</p>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Industries&quot;</span></span></code></pre></div>
 <p>Note that <strong>A</strong> and <strong>C</strong> can be
 matrix-multiplied, because the column type of <strong>A</strong> and the
-row type of <strong>C</strong> are identical (<tt>Industries</tt>). The
-result is a <tt>Products</tt>-by-<tt>Products</tt> matrix.</p>
+row type of <strong>C</strong> are identical (<code>Industries</code>).
+The result is a <code>Products</code>-by-<code>Products</code>
+matrix.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matrixproduct_byname</span>(A, C)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    p1 p2</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p1  7 15</span></span>
@@ -685,8 +688,8 @@ result is a <tt>Products</tt>-by-<tt>Products</tt> matrix.</p>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
 <p>However, <strong>A</strong> and <strong>B</strong> cannot be
 matrix-multiplied, because the column type of <strong>A</strong>
-(<tt>Industries</tt>) and the row type of <strong>B</strong>
-(<tt>Products</tt>) are different.</p>
+(<code>Industries</code>) and the row type of <strong>B</strong>
+(<code>Products</code>) are different.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">matrixproduct_byname</span>(A, B), <span class="at">error =</span> <span class="cf">function</span>(err){<span class="fu">print</span>(err)})</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;simpleError in organize_args(a, b, fill = 0, match_type = match_type): coltype(a) != rowtype(b): Industries != Products.&gt;</span></span></code></pre></div>
 <p>Analysts are encouraged to set row and column types on matrices,
@@ -754,10 +757,10 @@ as appropriate.</p>
 <span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Products&quot;</span></span></code></pre></div>
 </div>
 <div id="matsbyname-works-well-with-matsindf" class="section level3">
-<h3><tt>matsbyname</tt> works well with <tt>matsindf</tt></h3>
-<p>The <tt>matsindf</tt> package provides functions that collapse <a href="https://tidyr.tidyverse.org/articles/tidy-data.html">tidy</a> data
+<h3><code>matsbyname</code> works well with <code>matsindf</code></h3>
+<p>The <code>matsindf</code> package provides functions that collapse <a href="https://tidyr.tidyverse.org/articles/tidy-data.html">tidy</a> data
 frames of matrix elements into data frames of matrices. Data frames of
-matrices, such as those created by <tt>matsindf</tt>, are like magic
+matrices, such as those created by <code>matsindf</code>, are like magic
 spreadsheets in which single cells contain entire matrices.</p>
 <p>The following example demonstrates an approach to creating a data
 frame of matrices.</p>
@@ -818,8 +821,8 @@ frame of matrices.</p>
 <ul>
 <li><code>matsbyname</code> works well with lists, and</li>
 <li>data frame columns are implemented as lists, and</li>
-<li>the <tt>matsindf</tt> package can create data frames of matrices,
-and</li>
+<li>the <code>matsindf</code> package can create data frames of
+matrices, and</li>
 <li>the <a href="https://tidyr.tidyverse.org">tidyr</a> and <a href="https://dplyr.tidyverse.org">dplyr</a> packages work with data
 frames,</li>
 </ul>
@@ -885,19 +888,20 @@ instruction performs the same operation on all rows of a
 <ul>
 <li>Munge data into tidy data frame with columns for matrix name,
 element value, row name, column name, row type, and column type, similar
-to <tt>tidy</tt> above.</li>
-<li>Use <tt>matsindf::collapse_to_matrices</tt> to create a data frame
-of matrices with columns for matrix names and matrices themselves,
-similar to <tt>mats</tt> above.</li>
-<li><tt>tidyr::spread</tt> the matrices to obtain a data frame with
-columns for each matrix, similar to <tt>result</tt> above.</li>
+to <code>tidy</code> above.</li>
+<li>Use <code>matsindf::collapse_to_matrices()</code> to create a data
+frame of matrices with columns for matrix names and matrices themselves,
+similar to <code>mats</code> above.</li>
+<li><code>tidyr::pivot_wider()</code> the matrices to obtain a data
+frame with columns for each matrix, similar to <code>result</code>
+above.</li>
 <li>Perform matrix algebra operations on the columns of matrices using
-<tt>*_byname</tt> functions.</li>
-<li><tt>tidyr::gather</tt> the columns into a data frame with a single
-column of matrices.</li>
-<li>Use <tt>matsindf::expand_to_tidy</tt> to create a tidy data frame of
-matrix elements.</li>
-<li><tt>tidyr::spread</tt> the data as necessary.</li>
+<code>*_byname</code> functions.</li>
+<li><code>tidyr::pivot_longer()</code> the columns into a data frame
+with a single column of matrices.</li>
+<li>Use <code>matsindf::expand_to_tidy()</code> to create a tidy data
+frame of matrix elements.</li>
+<li><code>tidyr::pivot_wider()</code> the data as necessary.</li>
 <li>Graph or perform other manipulations of the data.</li>
 </ul>
 <p>For more information and a detailed example of this workflow, see the
@@ -905,11 +909,11 @@ vignette for the <code>matsindf</code> package.</p>
 </div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
-<p>The <tt>matsbyname</tt> package simplifies analyses in which row and
-column names ought to be respected. It provides optional row and column
-types, thereby ensuring that only valid matrix operations are performed.
-Finally, <tt>matsbyname</tt> functions work equally well with lists to
-allow use of <tt>*_byname</tt> functions with <a href="https://tidyr.tidyverse.org"><tt>tidyr</tt></a> and <a href="https://dplyr.tidyverse.org"><tt>dplyr</tt></a> approaches to
+<p>The <code>matsbyname</code> package simplifies analyses in which row
+and column names ought to be respected. It provides optional row and
+column types, thereby ensuring that only valid matrix operations are
+performed. Finally, <code>matsbyname</code> functions work equally well
+with lists to allow use of <code>*_byname</code> functions with <a href="https://tidyr.tidyverse.org"><code>tidyr</code></a> and <a href="https://dplyr.tidyverse.org"><code>dplyr</code></a> approaches to
 manipulating data.</p>
 </div>
 
