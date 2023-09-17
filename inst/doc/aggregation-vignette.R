@@ -37,7 +37,7 @@ m
 aggregate_byname(m, aggregation_map = list(birds = c("duck", "goose"), 
                                            zguitarists = c("John", "Paul", "George")))
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  # Not run
 #  aggregate_byname(m, aggregation_map = list(Beatles = c("John", "Paul", "George", "Ringo")))
 
