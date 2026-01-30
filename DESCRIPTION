@@ -2,8 +2,8 @@ Package: matsbyname
 Type: Package
 Title: An Implementation of Matrix Mathematics that Respects Row and
         Column Names
-Version: 0.6.13
-Date: 2025-05-14
+Version: 0.6.14
+Date: 2026-01-29
 Authors@R: c(person("Matthew", "Heun", role = c("aut", "cre"),
                      comment = c(ORCID = "0000-0002-7438-214X"),
                      email = "matthew.heun@me.com"))
@@ -11,7 +11,7 @@ Description: An implementation of matrix mathematics wherein operations are perf
 License: MIT + file LICENSE
 Language: en-US
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: R (>= 4.1.0)
 Config/testthat/edition: 3
 Config/testthat/parallel: true
@@ -25,9 +25,9 @@ URL: https://github.com/MatthewHeun/matsbyname,
         https://matthewheun.github.io/matsbyname/
 BugReports: https://github.com/MatthewHeun/matsbyname/issues
 NeedsCompilation: no
-Packaged: 2025-05-14 17:53:09 UTC; mkh2
+Packaged: 2026-01-29 20:11:28 UTC; mkh2
 Author: Matthew Heun [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-7438-214X>)
 Maintainer: Matthew Heun <matthew.heun@me.com>
 Repository: CRAN
-Date/Publication: 2025-05-14 18:30:02 UTC
+Date/Publication: 2026-01-30 06:10:28 UTC

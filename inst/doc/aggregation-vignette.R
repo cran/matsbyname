@@ -151,7 +151,7 @@ df_simple %>%
 # 2 rows are expected. 3 are observed.
 df_simple %>% 
   dplyr::group_by(key) %>% 
-  dplyr::summarise(val = sum_byname(val), .groups = "drop")
+  dplyr::reframe(val = sum_byname(val))
 
 ## -----------------------------------------------------------------------------
 res <- df_simple %>% 
@@ -168,7 +168,7 @@ m <- matrix(c(11, 12, 13,
 df <- tibble::tibble(key = c("A", "A", "B"), m = list(m, m, m))
 unexpected <- df %>% 
   dplyr::group_by(key) %>% 
-  dplyr::summarise(m = sum_byname(m), .groups = "drop")
+  dplyr::reframe(m = sum_byname(m))
 # 2 rows are expected. 3 are observed.
 unexpected
 res <- df %>% 

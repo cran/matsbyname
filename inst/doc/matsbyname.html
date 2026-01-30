@@ -12,7 +12,7 @@
 
 <meta name="author" content="Matthew Kuperus Heun" />
 
-<meta name="date" content="2025-05-14" />
+<meta name="date" content="2026-01-29" />
 
 <title>Use Cases and Examples for matsbyname</title>
 
@@ -50,8 +50,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +63,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -341,7 +342,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Use Cases and Examples for
 <code>matsbyname</code></h1>
 <h4 class="author">Matthew Kuperus Heun</h4>
-<h4 class="date">2025-05-14</h4>
+<h4 class="date">2026-01-29</h4>
 
 
 
@@ -551,11 +552,11 @@ and clicking the <code>Index</code> link.</p>
 <p>Furthermore, <code>matsbyname</code> works well with its sister
 package, <code>matsindf</code>. <code>matsindf</code> creates data
 frames whose entries are not numbers but entire matrices, thereby
-enabling the use of <code>matsbyname</code> functions in <a href="https://www.tidyverse.org"><code>tidyverse</code></a> functional
+enabling the use of <code>matsbyname</code> functions in <a href="https://tidyverse.org"><code>tidyverse</code></a> functional
 programming.</p>
 <p>When used together, <code>matsbyname</code> and <code>matsindf</code>
 allow analysts to wield simultaneously the power of both <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">matrix
-mathematics</a> and <a href="https://www.tidyverse.org"><code>tidyverse</code></a> functional
+mathematics</a> and <a href="https://tidyverse.org"><code>tidyverse</code></a> functional
 programming.</p>
 <p>This vignette demonstrates the power of matrix mathematics performed
 <code>byname</code>.</p>
@@ -913,8 +914,8 @@ vignette for the <code>matsindf</code> package.</p>
 and column names ought to be respected. It provides optional row and
 column types, thereby ensuring that only valid matrix operations are
 performed. Finally, <code>matsbyname</code> functions work equally well
-with lists to allow use of <code>*_byname</code> functions with <a href="https://tidyr.tidyverse.org"><code>tidyr</code></a> and <a href="https://dplyr.tidyverse.org"><code>dplyr</code></a> approaches to
-manipulating data.</p>
+with lists to allow use of <code>*_byname</code> functions with <a href="https://tidyr.tidyverse.org">tidyr</a> and <a href="https://dplyr.tidyverse.org">dplyr</a> approaches to manipulating
+data.</p>
 </div>
 
 
